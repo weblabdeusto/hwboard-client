@@ -3,30 +3,27 @@
 var $q;
 var $timeout;
 
-// Weblab mock.
-var Weblab = new function() {
-    var _cmd = "";
-    var _result = "";
 
-    this.dbgSetOfflineSendCommandResponse = function(cmd, result) {
-        _cmd = cmd;
-        if(result == undefined)
-            result = true;
-        _result = result;
-    };
+var weblab = new WeblabExp();
 
-    this.sendCommand = function(cmd, success, failure) {
-        if(_result) {
-            success(_cmd);
+weblab.dbgSetFakeServer(getFakeServerObject());
+weblab.enableDebuggingMode();;
+
+function getFakeServerObject() {
+    return {
+        start: function () {
+            return "";
+        },
+
+        sendCommand: function (cmd) {
+            // WARNING: No idea why, but invoking the $log function BLOCKS THE JAVASCRIPT THREAD FOREVER
+            // and results in a particularly non-intuitive timeout in the tests.
+            // $log.debug("[FakeServer]: Received command: " + cmd);
+
+            return "STATE=programming";
         }
-        if(!_result)
-            failure(_cmd);
     };
-
-    this.onConfigLoad = function() {
-
-    };
-};
+} // !getFakeServerObject
 
 describe('Factory: ledUpdater', function () {
 
@@ -62,6 +59,10 @@ describe('Factory: ledUpdater', function () {
         } // !onStatusUpdate
     });
 
+
+    /**
+     * TODO: Does not work without a real timeout, which should actually be avoided.
+     */
     it('should call callback after a while through $timeout', function(done) {
         expect(ledUpdater).toBeDefined();
 
@@ -71,7 +72,6 @@ describe('Factory: ledUpdater', function () {
 
         var times_called = 0;
 
-        $timeout.flush();
         $timeout.flush();
 
         // ---------------
@@ -84,10 +84,25 @@ describe('Factory: ledUpdater', function () {
             if(times_called > 1) {
                 done();
             }
+            else {
+                // We need to invoke the next flush in a real timeout, because otherwise the fake
+                // server has not returned a response for weblab.sendCommand, and there is thus no timeout
+                // to flush yet.
+                setTimeout(function () {
+                    try {
+                        $timeout.flush();
+                    } catch (ex) {
+                        console.log(ex);
+                    }
+                }, 550);
+            }
         } // !onStatusUpdate
     });
 
-    it('should report a "programming" test status', function(done) {
+    /**
+     * TODO: Ensure this test actually tests anything.
+     */
+    it('should provide some response to the led status check', function(done) {
         expect(ledUpdater).toBeDefined();
 
         ledUpdater.setOnLedUpdate(onLedUpdateCheck);

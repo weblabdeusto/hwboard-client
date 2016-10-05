@@ -43,6 +43,8 @@ function statusUpdater($injector, $log, $timeout) {
     function updateStatus() {
         //Weblab.dbgSetOfflineSendCommandResponse("STATE=programming");
 
+        console.log("[DBG] Sending command");
+
         weblab.sendCommand("STATE")
             .done(onStatusSuccess)
             .fail(onStatusError);
@@ -50,6 +52,9 @@ function statusUpdater($injector, $log, $timeout) {
 
     function onStatusSuccess(response) {
         $log.debug("SUCCESS: STATUS: " + response);
+
+        console.log("STATUS SUCCESS RESPONSE: ");
+        console.log(response);
 
         if(onStatusUpdateCallback != undefined) {
             var status = response.substring(6); // Remove the "STATE=" part.
@@ -60,6 +65,7 @@ function statusUpdater($injector, $log, $timeout) {
     }
 
     function onStatusError(error) {
+        console.error("ERROR: sendCommand (status)");
         $log.error("ERROR: sendCommand (status)");
         $log.error(error);
 

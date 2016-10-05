@@ -3,26 +3,29 @@
 var $q;
 var $timeout;
 
-// Weblab mock.
-var Weblab = new function() {
-    var _cmd = "";
-    var _result = "";
 
-    this.dbgSetOfflineSendCommandResponse = function(cmd, result) {
-        _cmd = cmd;
-        if(result == undefined)
-            result = true;
-        _result = result;
-    };
+var weblab = new WeblabExp();
 
-    this.sendCommand = function(cmd, success, failure) {
-        if(_result) {
-            success(_cmd);
+weblab.dbgSetFakeServer(getFakeServerObject());
+weblab.enableDebuggingMode();;
+
+function getFakeServerObject() {
+    return {
+        start: function () {
+            return "";
+        },
+
+        sendCommand: function (cmd) {
+            // WARNING: No idea why, but invoking the $log function BLOCKS THE JAVASCRIPT THREAD FOREVER
+            // and results in a particularly non-intuitive timeout in the tests.
+            // $log.debug("[FakeServer]: Received command: " + cmd);
+
+            return "STATE=programming";
         }
-        if(!_result)
-            failure(_cmd);
     };
-};
+} // !getFakeServerObject
+
+
 
 describe('Factory: statusUpdater', function () {
 
@@ -58,6 +61,10 @@ describe('Factory: statusUpdater', function () {
         } // !onStatusUpdate
     });
 
+    /**
+     * Currently slightly ugly because we need to do real timeouts for $timeout.flush to work.
+     * TODO: Fix that somehow.
+     */
     it('should call callback after a while through $timeout', function(done) {
         expect(statusUpdater).toBeDefined();
 
@@ -67,7 +74,6 @@ describe('Factory: statusUpdater', function () {
 
         var times_called = 0;
 
-        $timeout.flush();
         $timeout.flush();
 
         // ---------------
@@ -79,6 +85,18 @@ describe('Factory: statusUpdater', function () {
 
             if(times_called > 1) {
                 done();
+            }
+            else {
+                // We need to invoke the next flush in a real timeout, because otherwise the fake
+                // server has not returned a response for weblab.sendCommand, and there is thus no timeout
+                // to flush yet.
+                setTimeout(function () {
+                    try {
+                        $timeout.flush();
+                    } catch (ex) {
+                        console.log(ex);
+                    }
+                }, 550);
             }
         } // !onStatusUpdate
     });

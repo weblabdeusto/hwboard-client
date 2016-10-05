@@ -44,11 +44,14 @@ module.exports = function (config) {
             'bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
             'bower_components/angular-mocks/angular-mocks.js',
             // endbower
+            'test/deps/**/*.js',
             'app/main/*.js',
             'app/main/**/*.js',
-            'test/spec/pass/**/*.js'
-            //'test/mock/**/*.js',
+            'test/apps/**/*.js',
+            'test/mock/**/*.js',
+            //'test/spec/pass/**/*.js',
             //'test/spec/**/*.js'
+            'test/spec/status/*.js'
         ],
 
         // list of files / patterns to exclude
@@ -73,6 +76,7 @@ module.exports = function (config) {
         // Which plugins to enable
         plugins: [
             'karma-phantomjs2-launcher',
+            'karma-chrome-launcher',
             'karma-jasmine'
         ],
 
