@@ -22,6 +22,10 @@ var Weblab = new function() {
         if(!_result)
             failure(_cmd);
     };
+
+    this.onConfigLoad = function() {
+
+    };
 };
 
 describe('Factory: ledUpdater', function () {

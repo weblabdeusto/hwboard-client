@@ -46,8 +46,9 @@ module.exports = function (config) {
             // endbower
             'app/main/*.js',
             'app/main/**/*.js',
-            'test/mock/**/*.js',
-            'test/spec/**/*.js'
+            'test/spec/pass/**/*.js'
+            //'test/mock/**/*.js',
+            //'test/spec/**/*.js'
         ],
 
         // list of files / patterns to exclude
@@ -62,15 +63,16 @@ module.exports = function (config) {
         // - Firefox
         // - Opera
         // - Safari (only Mac)
-        // - PhantomJS
+        // - PhantomJS [DOES NOT WORK WITHOUT A POLYFILL]
+        // - PhantomJS2
         // - IE (only Windows)
         browsers: [
-            'PhantomJS'
+            'PhantomJS2'
         ],
 
         // Which plugins to enable
         plugins: [
-            'karma-phantomjs-launcher',
+            'karma-phantomjs2-launcher',
             'karma-jasmine'
         ],
 
