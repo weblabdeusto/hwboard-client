@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/weblabdeusto/hwboard-client.svg?branch=master)](https://travis-ci.org/weblabdeusto/hwboard-client)
+
+
 # hwboard
 
 This project is generated with [yo angular generator](https://github.com/yeoman/generator-angular)
