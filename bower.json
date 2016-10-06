@@ -22,6 +22,6 @@
   "appPath": "app",
   "moduleName": "hwboardApp",
   "resolutions": {
-    "angular": "1.4.7"
+    "angular": "1.5.8"
   }
 }
