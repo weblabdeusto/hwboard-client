@@ -1,6 +1,7 @@
 language: node_js
 sudo: required
 before_install:
+  # These seem to be required for phantomjs2 to work on the current travis version. Though it may stop working in the future.
   - sudo wget http://security.ubuntu.com/ubuntu/pool/main/i/icu/libicu52_52.1-3ubuntu0.4_amd64.deb
   - sudo dpkg -i libicu52_52.1-3ubuntu0.4_amd64.deb
 node_js:
